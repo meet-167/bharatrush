@@ -1,4 +1,4 @@
-import * as THREE from 'three';
+import * as THREE from 'https://unpkg.com/three@0.160.0/build/three.module.js';
 
 const SHOP_NAMES = {
   1: ["CHAI TAPRI", "VADA PAV", "MUMBAI SPICE", "KIRANA SHOP", "AUTO SHACK"],
