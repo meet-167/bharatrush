@@ -1,0 +1,260 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="./favicon.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+    <title>BharatRush - 3D Indian Runner</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&family=Outfit:wght@800;900&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="/src/style.css" />
+  </head>
+  <body>
+    <div id="app-container">
+      <!-- Ambient Background Glows -->
+      <div class="ambient-glow ambient-glow-1"></div>
+      <div class="ambient-glow ambient-glow-2"></div>
+
+      <!-- 3D Canvas Container -->
+      <div id="game-canvas-container">
+        <canvas id="game-canvas"></canvas>
+      </div>
+
+      <!-- UI Screen: HOME -->
+      <div id="home-screen" class="ui-screen active">
+        <div class="header-banner">
+          <div class="logo-subtitle">INDIAN STREET ADVENTURE</div>
+          <h1 class="logo-title">BHARAT<span class="highlight">RUSH</span></h1>
+        </div>
+
+        <div class="menu-actions">
+          <button id="btn-play-now" class="btn btn-primary btn-glow">
+            <span class="btn-icon">▶</span> PLAY NOW
+          </button>
+          <button id="btn-show-levels" class="btn btn-secondary">
+            <span class="btn-icon">🗺️</span> SELECT CITY
+          </button>
+          <button id="btn-how-to-play" class="btn btn-tertiary">
+            <span class="btn-icon">❓</span> HOW TO PLAY
+          </button>
+        </div>
+
+        <div class="footer-info">
+          <p>Avoid obstacles, dodge traffic, and clear streets in Indian cities!</p>
+        </div>
+      </div>
+
+      <!-- UI Screen: LEVELS -->
+      <div id="levels-screen" class="ui-screen">
+        <button id="btn-back-to-home" class="btn-back">
+          <span class="arrow">←</span> BACK
+        </button>
+
+        <div class="screen-title-section">
+          <h2>SELECT A <span class="highlight">CITY</span></h2>
+          <p>Complete the target score in each city to unlock the next destination.</p>
+        </div>
+
+        <div class="levels-container">
+          <!-- Level Cards will be generated dynamically or predefined in HTML -->
+          <div class="level-card unlocked" id="card-level-1" data-level="1">
+            <div class="city-badge">LEVEL 1</div>
+            <div class="city-name">MUMBAI</div>
+            <div class="city-theme">Neon Monsoon Night</div>
+            <div class="city-target">Target Score: 500</div>
+            <div class="city-highscore">High Score: <span id="hs-1">0</span></div>
+            <button class="btn-level-play">TRAVEL</button>
+          </div>
+
+          <div class="level-card locked" id="card-level-2" data-level="2">
+            <div class="city-badge">LEVEL 2</div>
+            <div class="lock-overlay"><span class="lock-icon">🔒</span></div>
+            <div class="city-name">DELHI</div>
+            <div class="city-theme">Sunset Dust Storm</div>
+            <div class="city-target">Target Score: 800</div>
+            <div class="city-highscore">High Score: <span id="hs-2">0</span></div>
+            <button class="btn-level-play" disabled>LOCKED</button>
+          </div>
+
+          <div class="level-card locked" id="card-level-3" data-level="3">
+            <div class="city-badge">LEVEL 3</div>
+            <div class="lock-overlay"><span class="lock-icon">🔒</span></div>
+            <div class="city-name">PUNE</div>
+            <div class="city-theme">Morning Potholes & Fog</div>
+            <div class="city-target">Target Score: 1200</div>
+            <div class="city-highscore">High Score: <span id="hs-3">0</span></div>
+            <button class="btn-level-play" disabled>LOCKED</button>
+          </div>
+
+          <div class="level-card locked" id="card-level-4" data-level="4">
+            <div class="city-badge">LEVEL 4</div>
+            <div class="lock-overlay"><span class="lock-icon">🔒</span></div>
+            <div class="city-name">BANGALORE</div>
+            <div class="city-theme">Tech Dusk Traffic Jam</div>
+            <div class="city-target">Target Score: 1500</div>
+            <div class="city-highscore">High Score: <span id="hs-4">0</span></div>
+            <button class="btn-level-play" disabled>LOCKED</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- UI Screen: GAMEPLAY HUD -->
+      <div id="hud-screen" class="ui-screen">
+        <div class="hud-top-bar">
+          <div class="hud-stat-group">
+            <div class="hud-stat-label">SCORE</div>
+            <div id="hud-score" class="hud-stat-value">0000</div>
+          </div>
+          
+          <div class="hud-level-indicator">
+            <span id="hud-city-name">MUMBAI</span>
+            <div id="hud-progress-container">
+              <div id="hud-progress-bar"></div>
+            </div>
+            <span class="target-indicator">Target: <span id="hud-target-score">500</span></span>
+          </div>
+
+          <div class="hud-stat-group">
+            <div class="hud-stat-label">GARBAGE CLEANED</div>
+            <div id="hud-coins" class="hud-stat-value">0</div>
+          </div>
+
+          <button id="btn-pause-game" class="btn-icon-only" aria-label="Pause Game">
+            <span>⏸</span>
+          </button>
+        </div>
+
+        <!-- Controls Guide (shown briefly at game start) -->
+        <div id="controls-guide" class="controls-guide-hint">
+          <div class="keys-visual">
+            <div class="key-row">
+              <div class="key key-up">▲</div>
+            </div>
+            <div class="key-row">
+              <div class="key">◀</div>
+              <div class="key">▼</div>
+              <div class="key">▶</div>
+            </div>
+          </div>
+          <p>Use Arrow keys / Swipe to Jump, Slide & Switch Lanes</p>
+        </div>
+
+        <!-- Mobile Touch Controls HUD -->
+        <div id="mobile-touch-controls" class="mobile-controls-overlay">
+          <div class="touch-btn-left-side">
+            <button id="touch-btn-left" class="touch-btn" aria-label="Move Left">◀</button>
+            <button id="touch-btn-right" class="touch-btn" aria-label="Move Right">▶</button>
+          </div>
+          <div class="touch-btn-right-side">
+            <button id="touch-btn-jump" class="touch-btn" aria-label="Jump">▲</button>
+            <button id="touch-btn-slide" class="touch-btn" aria-label="Slide">▼</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- UI Overlay: PAUSE MODAL -->
+      <div id="pause-screen" class="ui-modal-overlay">
+        <div class="ui-modal">
+          <h2>GAME <span class="highlight">PAUSED</span></h2>
+          <div class="paused-stats">
+            <p>Current Score: <span id="pause-score">0</span></p>
+            <p>Garbage Cleaned: <span id="pause-coins">0</span></p>
+          </div>
+          <div class="modal-actions">
+            <button id="btn-resume" class="btn btn-primary">RESUME</button>
+            <button id="btn-pause-restart" class="btn btn-secondary">RESTART</button>
+            <button id="btn-pause-home" class="btn btn-tertiary">QUIT TO MENU</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- UI Overlay: GAME OVER MODAL -->
+      <div id="game-over-screen" class="ui-modal-overlay">
+        <div class="ui-modal crashed">
+          <h2 class="alert-title">CRASHED!</h2>
+          <div class="modal-icon">💥</div>
+          <p class="crashed-message" id="crashed-reason">You hit an auto-rickshaw!</p>
+          <div class="stats-breakdown">
+            <div class="stat-row">
+              <span>Final Score:</span>
+              <span id="go-score" class="val-highlight">0</span>
+            </div>
+            <div class="stat-row">
+              <span>Garbage Collected:</span>
+              <span id="go-coins" class="val-highlight">0</span>
+            </div>
+            <div id="new-high-score-tag" class="new-highscore-badge hidden">NEW HIGH SCORE!</div>
+          </div>
+          <div class="modal-actions">
+            <button id="btn-go-restart" class="btn btn-primary">TRY AGAIN</button>
+            <button id="btn-go-home" class="btn btn-secondary">MAIN MENU</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- UI Overlay: LEVEL CLEAR MODAL -->
+      <div id="level-clear-screen" class="ui-modal-overlay">
+        <div class="ui-modal clear">
+          <h2 class="success-title">CITY CLEARED!</h2>
+          <div class="modal-icon">🎉</div>
+          <p class="congrats-message">You cleaned the streets and beat the target score!</p>
+          <div class="stats-breakdown">
+            <div class="stat-row">
+              <span>Final Score:</span>
+              <span id="clear-score" class="val-highlight">0</span>
+            </div>
+            <div class="stat-row">
+              <span>Garbage Cleaned:</span>
+              <span id="clear-coins" class="val-highlight">0</span>
+            </div>
+          </div>
+          <div class="modal-actions">
+            <button id="btn-clear-next" class="btn btn-primary">NEXT CITY</button>
+            <button id="btn-clear-home" class="btn btn-secondary">MAIN MENU</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- UI Overlay: HOW TO PLAY MODAL -->
+      <div id="how-to-play-screen" class="ui-modal-overlay">
+        <div class="ui-modal instruction-modal">
+          <h2>HOW TO <span class="highlight">PLAY</span></h2>
+          <div class="instruction-content">
+            <div class="instr-item">
+              <span class="instr-key">▲</span>
+              <div>
+                <strong>JUMP:</strong> Press Arrow Up to jump over potholes, open manholes, and low barriers.
+              </div>
+            </div>
+            <div class="instr-item">
+              <span class="instr-key">▼</span>
+              <div>
+                <strong>SLIDE:</strong> Press Arrow Down to slide under street signs or clear hurdles.
+              </div>
+            </div>
+            <div class="instr-item">
+              <span class="instr-key">◀ / ▶</span>
+              <div>
+                <strong>MOVE LANES:</strong> Press Left/Right arrows to dodge vehicles like auto-rickshaws, bikes, and crazy rash drivers.
+              </div>
+            </div>
+            <div class="instr-item">
+              <span class="instr-key">🧹</span>
+              <div>
+                <strong>GARBAGE CLEANUP:</strong> Run over small garbage items (banana peels, plastic bottles, paper bags) on the street to earn extra score points and clean India!
+              </div>
+            </div>
+          </div>
+          <div class="modal-actions">
+            <button id="btn-close-how" class="btn btn-primary">GOT IT</button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>
