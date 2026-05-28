@@ -1,4 +1,4 @@
-import * as THREE from 'three';
+import * as THREE from 'https://unpkg.com/three@0.160.0/build/three.module.js';
 import { Player } from './Player.js';
 import { Road } from './Road.js';
 import { ObstaclesManager, OBSTACLE_TYPES, ITEM_TYPES } from './Obstacles.js';
